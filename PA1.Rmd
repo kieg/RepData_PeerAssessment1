@@ -55,12 +55,12 @@ head(totalActivity)
 
 ```{r}
 
-g <- ggplot(totalActivity, aes(date, totalSteps))
+g <- ggplot(totalActivity, aes(x = totalSteps))
 
-g <- g + geom_histogram(stat = "identity") + 
+g <- g + geom_histogram(aes(y=..count../sum(..count..)), fill = "blue") +
   ggtitle("Total Steps Taken Each Day") +
-  xlab("Date") + 
-  ylab("Total Steps (per day)")
+  xlab("Total Steps Taken Per Day") + 
+  ylab("Proportion")
 
 g
 
@@ -71,14 +71,11 @@ g
 ```{r}
 
 # mean activity
-meanActivity <- totalActivity %>%
-  summarize(meanSteps = mean(totalSteps))
+meanActivity <- mean(totalActivity$totalSteps)
+meanActivity
 
 # median activity
-medianActivity <- totalActivity %>%
-  summarize(meanSteps = median(totalSteps))
-
-meanActivity 
+medianActivity <- median(totalActivity$totalSteps)
 medianActivity
 
 ```
@@ -149,20 +146,17 @@ totalActivityComplete <- activityDataComplete %>%
   group_by(date) %>%
   summarize(totalSteps = sum(steps))
 
-g <- ggplot(totalActivityComplete, aes(date, totalSteps))
-g + geom_histogram(stat = "identity") +
+g <- ggplot(totalActivityComplete, aes(x = totalSteps))
+g + geom_histogram(aes(y=..count../sum(..count..))) +
   ggtitle("Total Steps Taken (NA Values Removed)") +
-  xlab("Date") +
-  ylab("Total Steps")
+  xlab("Total Steps Taken") +
+  ylab("Proportion")
 
 
-meanActivityNoNA <- totalActivityComplete %>%
-  summarize(meanStepsnoNA = mean(totalSteps))
+meanActivityNoNA <- mean(totalActivityComplete$totalSteps)
+medianActivitynoNA <- median(totalActivityComplete$totalSteps)
 
-medianActivitynoNA <- totalActivityComplete %>%
-  summarize(medianStepsnoNA = median(totalSteps))
-
-combined <- cbind(meanActivity, 
+combined <- rbind(meanActivity, 
                   medianActivity, 
                   meanActivityNoNA, 
                   medianActivitynoNA)

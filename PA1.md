@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
@@ -65,49 +60,39 @@ head(totalActivity)
 
 
 ```r
-g <- ggplot(totalActivity, aes(date, totalSteps))
+g <- ggplot(totalActivity, aes(x = totalSteps))
 
-g <- g + geom_histogram(stat = "identity") + 
+g <- g + geom_histogram(aes(y=..count../sum(..count..)), fill = "blue") +
   ggtitle("Total Steps Taken Each Day") +
-  xlab("Date") + 
-  ylab("Total Steps (per day)")
+  xlab("Total Steps Taken Per Day") + 
+  ylab("Proportion")
 
 g
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+![](PA1_files/figure-html/unnamed-chunk-4-1.png) 
 
 3. Calculate and report the mean and median of the total number of steps taken per day.
 
 
 ```r
 # mean activity
-meanActivity <- totalActivity %>%
-  summarize(meanSteps = mean(totalSteps))
-
-# median activity
-medianActivity <- totalActivity %>%
-  summarize(meanSteps = median(totalSteps))
-
-meanActivity 
+meanActivity <- mean(totalActivity$totalSteps)
+meanActivity
 ```
 
 ```
-## Source: local data frame [1 x 1]
-## 
-##   meanSteps
-## 1  10766.19
+## [1] 10766.19
 ```
 
 ```r
+# median activity
+medianActivity <- median(totalActivity$totalSteps)
 medianActivity
 ```
 
 ```
-## Source: local data frame [1 x 1]
-## 
-##   meanSteps
-## 1     10765
+## [1] 10765
 ```
 
 
@@ -132,7 +117,7 @@ g + geom_line() +
   ylab("Mean Number of Steps")
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
+![](PA1_files/figure-html/unnamed-chunk-6-1.png) 
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
@@ -188,23 +173,20 @@ totalActivityComplete <- activityDataComplete %>%
   group_by(date) %>%
   summarize(totalSteps = sum(steps))
 
-g <- ggplot(totalActivityComplete, aes(date, totalSteps))
-g + geom_histogram(stat = "identity") +
+g <- ggplot(totalActivityComplete, aes(x = totalSteps))
+g + geom_histogram(aes(y=..count../sum(..count..))) +
   ggtitle("Total Steps Taken (NA Values Removed)") +
-  xlab("Date") +
-  ylab("Total Steps")
+  xlab("Total Steps Taken") +
+  ylab("Proportion")
 ```
 
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
+![](PA1_files/figure-html/unnamed-chunk-10-1.png) 
 
 ```r
-meanActivityNoNA <- totalActivityComplete %>%
-  summarize(meanStepsnoNA = mean(totalSteps))
+meanActivityNoNA <- mean(totalActivityComplete$totalSteps)
+medianActivitynoNA <- median(totalActivityComplete$totalSteps)
 
-medianActivitynoNA <- totalActivityComplete %>%
-  summarize(medianStepsnoNA = median(totalSteps))
-
-combined <- cbind(meanActivity, 
+combined <- rbind(meanActivity, 
                   medianActivity, 
                   meanActivityNoNA, 
                   medianActivitynoNA)
@@ -213,8 +195,11 @@ combined
 ```
 
 ```
-##   meanSteps meanSteps meanStepsnoNA medianStepsnoNA
-## 1  10766.19     10765      10751.74           10656
+##                        [,1]
+## meanActivity       10766.19
+## medianActivity     10765.00
+## meanActivityNoNA   10751.74
+## medianActivitynoNA 10656.00
 ```
 
 Overall, substituting NA values for the mean step value which occurred on that given day had only a slight effect on the mean and median step values. The replacement of NA values in this way produced an almost indiscernable change in the mean value, and resulted in a decrease of 100 in the median value. 
@@ -250,5 +235,5 @@ g <- g + geom_line() + xlab("Hour of the day") +
 g + facet_grid(weekday ~ .)
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png) 
+![](PA1_files/figure-html/unnamed-chunk-12-1.png) 
 
